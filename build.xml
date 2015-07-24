@@ -1,0 +1,79 @@
+<project name="ANT" default="execute" basedir=".">
+<property name="src" value="./src" />
+<property name="lib" value="D:\d-drive latest\all testing materials\h2k\jar files\jars1" />
+<property name="bin" value="./bin/" />
+<property name="report" value="./report" />
+<path id="test.classpath">
+    <pathelement location="${bin}" />
+    <fileset dir="${lib}">
+        <include name="**/*.jar" />
+    </fileset>
+</path>
+
+<target name="Clean">
+
+	<echo message="deleting existing build directory"/>
+
+	<delete dir="${bin}"/>
+	<delete dir="${report}" />
+
+</target>	
+	
+<target name="PreRequisite" depends="Clean">
+    <delete dir="${bin}" />
+    <mkdir dir="${bin}" />
+</target>
+
+<target name="compile" depends="PreRequisite">
+    
+    <javac srcdir="${src}" destdir="${bin}" includeantruntime="false">
+        <classpath>
+            <pathelement path="${bin}">
+            </pathelement>
+            <fileset dir="${lib}">
+                <include name="**/*.jar" />
+            </fileset>
+        </classpath>
+    </javac>
+</target>
+
+<target name="execute" depends="compile">
+    <delete dir="${report}" />
+    <mkdir dir="${report}" />
+        <mkdir dir="${report}/xml" />
+		<parallel>
+							    <junit printsummary="yes" haltonfailure="no">
+							        <classpath>
+							            <pathelement location="${bin}" />
+							            <fileset dir="${lib}">
+							                <include name="**/*.jar" />
+							            </fileset>
+							        </classpath>
+							
+							        <test name="BusinessAactions" haltonfailure="no" todir="${report}/xml" outfile="TEST-result">
+							       <formatter type="xml" />
+							        </test>
+							    </junit>
+	
+								<junit printsummary="yes" haltonfailure="no">
+								        <classpath>
+								            <pathelement location="${bin}" />
+								            <fileset dir="${lib}">
+								                <include name="**/*.jar" />
+								            </fileset>
+								        </classpath>
+								
+								        <test name="BusinessAactions" haltonfailure="no" todir="${report}/xml" outfile="TEST-result">
+								       <formatter type="xml" />
+								        </test>
+								</junit>
+			</parallel>	
+	    <junitreport todir="${report}">
+        <fileset dir="${report}/xml">
+            <include name="TEST*.xml" />
+        </fileset>
+        <report format="frames" todir="${report}/html" />
+    </junitreport>
+</target>
+
+</project>
